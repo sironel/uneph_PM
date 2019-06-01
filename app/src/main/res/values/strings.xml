@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Custom Contact</string>
+    <string name="tv_name_layout">Nom</string>
+    <string name="tv_surname_layout">Prenom</string>
+    <string name="tv_tel_layout">Tel</string>
+</resources>

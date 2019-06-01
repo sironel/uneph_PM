@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/lbl_nom"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/txt_nom"
+        android:layout_marginLeft="5dp"
+        android:text="Nom"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/txt_nom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/lbl_nom"
+        android:layout_toRightOf="@+id/lbl_nom"
+        android:inputType="text"
+        android:hint="Nom"/>
+
+    <TextView
+        android:id="@+id/lbl_prenom"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lbl_nom"
+        android:layout_marginLeft="5dp"
+        android:layout_alignBaseline="@id/txt_prenom"
+        android:text="Prenom"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/txt_prenom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/lbl_prenom"
+        android:layout_toRightOf="@+id/lbl_prenom"
+        android:layout_below="@+id/txt_nom"
+        android:inputType="text"
+        android:hint="Prenom"/>
+
+    <TextView
+        android:id="@+id/lbl_tel"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lbl_prenom"
+        android:layout_alignParentBottom="false"
+        android:layout_marginLeft="5dp"
+        android:layout_alignBaseline="@id/txt_tel"
+        android:text="Tel"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/txt_tel"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/lbl_tel"
+        android:layout_toRightOf="@+id/lbl_tel"
+        android:layout_below="@+id/txt_prenom"
+        android:inputType="phone"
+        android:hint="Telephone"/>
+
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_tel"
+        android:layout_centerHorizontal="true"
+        android:text="Ajouter" />
+
+    <Button
+        android:id="@+id/btn_liste"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/btn_add"
+        android:layout_toRightOf="@+id/btn_add"
+        android:layout_alignBaseline="@id/btn_add"
+        android:layout_centerHorizontal="true"
+        android:text="Liste" />
+
+    <TextView
+        android:id="@+id/txt_Compteur"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Compteur"
+        android:background="@color/colorPrimary"
+        android:textSize="18dp"
+        android:textColor="#fff"
+        android:padding="10dp"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>
