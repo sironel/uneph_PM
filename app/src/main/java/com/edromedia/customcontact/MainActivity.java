@@ -78,7 +78,9 @@ public class MainActivity extends AppCompatActivity {
                 String tel = txt_tel.getText().toString();
                 if ((nom.length()>0) &&(prenom.length()>0)&&(tel.length()>0)){
                     contact c = new contact(nom, prenom, tel);
-                    ajouterContact(c);
+
+                    c.add(MainActivity.this,getContentResolver());
+                   // ajouterContact(c);
                     razo();
                     Toast.makeText(MainActivity.this,"Contact ajouté avec succès.",Toast.LENGTH_SHORT).show();
 
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -107,34 +111,5 @@ public class MainActivity extends AppCompatActivity {
         txt_nom.requestFocus();
     }
 
-    private void ajouterContact(contact c){
-        ArrayList<ContentProviderOperation> contentProviderOperations = new ArrayList<ContentProviderOperation>();
-        contentProviderOperations.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null).withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null).build());
-        //insert contact Family name using Data.CONTENT_URI
-        contentProviderOperations.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, c.getNom()).build());
-
-        //insert contact Given name using Data.CONTENT_URI
-        contentProviderOperations.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, c.getPrenom()).build());
-
-        //insert mobile number using Data.CONTENT_URI
-        contentProviderOperations.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, c.getTel())
-                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE).build());
-        try {
-            getContentResolver().applyBatch(ContactsContract.AUTHORITY, contentProviderOperations);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(MainActivity.this, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
 
 }
