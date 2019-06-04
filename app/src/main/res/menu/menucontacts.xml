@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+      android:id="@+id/lst_cp"
+      android:title="Liste a partir de contentProvider"/>
+    <item
+        android:id="@+id/lst_fl"
+        android:title="Liste a partir de fichier"/>
+    <item
+        android:id="@+id/lst_db"
+        android:title="Liste a partir de DB"/>
+    <item
+        android:id="@+id/fltodb"
+        android:title="Copier fichier dans DB"/>
+
+    <item
+        android:id="@+id/exit"
+        android:title="Exit to Liste"/>
+
+</menu>

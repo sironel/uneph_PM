@@ -1,9 +1,6 @@
 package com.edromedia.customcontact;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +9,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class MonAdapter extends ArrayAdapter<contact> {
-    List<contact> cont;
+public class MonAdapter extends ArrayAdapter<Contact> {
+    List<Contact> cont;
     Context c;
     int r;
-    public MonAdapter(Context context, int resource, List<contact> objects) {
+    public MonAdapter(Context context, int resource, List<Contact> objects) {
         super(context, resource, objects);
         this.cont = objects;
         this.c = context;
@@ -28,7 +25,7 @@ public class MonAdapter extends ArrayAdapter<contact> {
     public View getView(int position,  View convertView, ViewGroup parent) {
 
         // Get the data item for this position
-        contact cont = getItem(position);
+        Contact cont = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.layout, parent, false);
@@ -46,8 +43,5 @@ public class MonAdapter extends ArrayAdapter<contact> {
     }
 
 
-//        LayoutInflater inflater = ((Activity) c).getLayoutInflater();
-//        View v = inflater.inflate(r,parent,false);
-//        return v;
 
 }

@@ -65,11 +65,44 @@
         android:inputType="phone"
         android:hint="Telephone"/>
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_tel"
+        android:layout_centerHorizontal="true"
+        android:layout_weight=".33">
+
+        <RadioButton
+            android:id="@+id/radioButtonCP"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Save to content provider contact" />
+
+        <RadioButton
+            android:id="@+id/radioButtonFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save to file" />
+
+        <RadioButton
+            android:id="@+id/radioButtonDB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save to Database" />
+
+
+    </RadioGroup>
+
     <Button
         android:id="@+id/btn_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_tel"
+        android:layout_below="@+id/radioGroup"
         android:layout_centerHorizontal="true"
         android:text="Ajouter" />
 
