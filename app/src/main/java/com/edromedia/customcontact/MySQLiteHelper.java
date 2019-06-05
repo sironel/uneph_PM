@@ -77,10 +77,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     private Contact cursorToContact(Cursor cursor) {
         Contact co= new Contact("","","");
-        co.setNom(cursor.getString(1));
-        co.setPrenom(cursor.getString(2));
+        co.setNom((cursor.getString(1)).toUpperCase());
+        co.setPrenom(upperFirst(cursor.getString(2)));
         co.setTel(cursor.getString(3));
 
         return co;
     }
+
+    private String upperFirst(String s){
+        return(s.substring(0, 1).toUpperCase() + s.substring(1));
+    }
+
 }

@@ -93,11 +93,15 @@ public class Content_Provider {
             } catch (Exception e) {
             }
 
-            Contact c = new Contact((last_name).toUpperCase(), first_name, phoneNumber);
+            Contact c = new Contact((last_name).toUpperCase(), upperFirst(first_name), phoneNumber);
             conta.add(c);
         }
         phone_cursor.close();
         return conta;
+    }
+
+    private String upperFirst(String s){
+        return(s.substring(0, 1).toUpperCase() + s.substring(1));
     }
 
 

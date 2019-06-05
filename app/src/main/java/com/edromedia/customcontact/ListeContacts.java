@@ -95,25 +95,19 @@ public class ListeContacts extends AppCompatActivity {
                 listView.setAdapter(adapter);
                 return true;
             case R.id.fltodb:
-//                txt_contact.setText("Liste à partir de Database");
-//                ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,msh,f);
-//                int nbTrans = sftDB.transfertFileToBD();
-//               // Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ");
-//               // MySQLiteHelper msh = new MySQLiteHelper(this);
-//                cont = msh.getAllCotacts();
-//                adapter = new MonAdapter(this,R.layout.layout,cont);
-//                listView.setAdapter(adapter);
+                txt_contact.setText("Liste à partir de Database");
+                MySQLiteHelper ms = new MySQLiteHelper(this);
+                File_Manage fi = new File_Manage("contacts.txt",this,true);
+                ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,ms,fi);
+                int nbTrans = sftDB.transfertFileToBD();
+                Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ",Toast.LENGTH_SHORT).show();
+
+              cont = ms.getAllCotacts();
+              adapter = new MonAdapter(this,R.layout.layout,cont);
+              listView.setAdapter(adapter);
                  return true;
             case R.id.exit:
                 finish();
-//                txt_contact.setText("Liste à partir de Database");
-//                ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,msh,f);
-//                int nbTrans = sftDB.transfertFileToBD();
-//               // Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ");
-//               // MySQLiteHelper msh = new MySQLiteHelper(this);
-//                cont = msh.getAllCotacts();
-//                adapter = new MonAdapter(this,R.layout.layout,cont);
-//                listView.setAdapter(adapter);
                 return true;
             default:
                 return super.onContextItemSelected(item);

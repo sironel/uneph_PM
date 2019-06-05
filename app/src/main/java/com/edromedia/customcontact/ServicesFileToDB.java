@@ -8,14 +8,14 @@ import java.util.List;
 public class ServicesFileToDB {
     Context context;
     String filename;
-    boolean externalFile;
+    boolean internalFile;
     MySQLiteHelper Mydb = new MySQLiteHelper(context);
-    File_Manage fm = new File_Manage(filename,context,externalFile);
+    File_Manage fm = new File_Manage(filename,context,internalFile);
 
-    public ServicesFileToDB(Context context, String filename, boolean externalFile, MySQLiteHelper mydb, File_Manage fm) {
+    public ServicesFileToDB(Context context, String filename, boolean internalFile, MySQLiteHelper mydb, File_Manage fm) {
         this.context = context;
         this.filename = filename;
-        this.externalFile = externalFile;
+        this.internalFile = internalFile;
         Mydb = mydb;
         this.fm = fm;
     }
@@ -37,11 +37,11 @@ public class ServicesFileToDB {
     }
 
     public boolean isExternalFile() {
-        return externalFile;
+        return internalFile;
     }
 
     public void setExternalFile(boolean externalFile) {
-        this.externalFile = externalFile;
+        this.internalFile = internalFile;
     }
 
     public MySQLiteHelper getMydb() {
@@ -72,7 +72,7 @@ public class ServicesFileToDB {
         for(int i = 0 ; i < fmContact.size(); i++) {
 
             cfl = fmContact.get(i);
-            for (int j = 0; j < dbContact.size(); i++) {
+            for (int j = 0; j < dbContact.size(); j++) {
                 cbd = dbContact.get(j);
                 if ((cfl.getNom() == cbd.getNom()) && (cfl.getPrenom() == cbd.getPrenom()) && (cfl.getTel() == cbd.getTel())) {
 
