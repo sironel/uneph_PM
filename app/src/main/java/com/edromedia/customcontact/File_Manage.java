@@ -7,9 +7,11 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class File_Manage {
@@ -62,7 +64,7 @@ public class File_Manage {
             while ((info = brInfo.readLine()) != null)
             {
                 infoContact = info.split("\t\t");
-                Contact c = new Contact((infoContact[0]).toUpperCase(), upperFirst(infoContact[1]), infoContact[2]);
+                Contact c = new Contact( infoContact[0],(infoContact[1]).toUpperCase(), upperFirst(infoContact[2]), infoContact[3]);
                 conta.add(c);
             }
             // fermeture du Reader
@@ -76,6 +78,63 @@ public class File_Manage {
         return conta;
     }
 
+
+    public boolean recordFound(String id){
+        String[] infoContact;
+      boolean trouver = false;
+        try {
+            // ouverture du fichier pour lecture
+            BufferedReader brInfo = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
+            // line est une variable qui stocke le contenu d’une ligne
+            String info;
+            while ((info = brInfo.readLine()) != null)
+            {
+                infoContact = info.split("\t\t");
+                if((infoContact[0]).equals(id))
+                    trouver = true;
+                break;
+            }
+            // fermeture du Reader
+            brInfo.close();
+        }
+        catch (Exception e)
+        {
+            // Si une erreur existe, l’afficher dans un Toast
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return trouver;
+    }
+
+    public  String generateID(){
+     String id = Integer.toString(nbRcordFile() + 1);
+
+        while (recordFound(id)){
+            id = Integer.toString(Integer.parseInt(id) + 1);
+        }
+    return id;
+    }
+
+
+    public int nbRcordFile(){
+      int nbrecord = 0;
+        try {
+            BufferedReader brInfo = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
+            String info;
+            while ((info = brInfo.readLine()) != null)
+            {
+               nbrecord++;
+            }
+               brInfo.close();
+        }
+        catch (Exception e)
+        {
+                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return nbrecord;
+    }
+
+
+
     public void writeFile(Contact c){
         //Ecrire les infos du Contact dans le fichier nom.txt
         try {
@@ -87,8 +146,10 @@ public class File_Manage {
             }else{
                 bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
             }
+            // generer l'id du contact
+             String id = generateID();
             // écriture de la chaîne de caractère dans le fichier
-            bw.write(c.getNom()+"\t\t"+c.getPrenom()+"\t\t"+c.getTel());
+            bw.write(id+"\t\t"+c.getNom()+"\t\t"+c.getPrenom()+"\t\t"+c.getTel());
             bw.newLine();
             // fermeture du fichier
             bw.close();
@@ -99,6 +160,28 @@ public class File_Manage {
         }
     }
 
+
+    public void deleteContact(Contact c){
+
+            List<Contact> lines = new ArrayList<>();
+            lines = readFile();
+            int index = lines.indexOf(c);
+            if (index >= 0 && index <= lines.size() - 1) {
+                lines.remove(index);
+
+                try {
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
+                    for (final Contact line : lines)
+                        writer.write(line.getId() + "\t\t" + line.getNom() + "\t\t" + line.getPrenom() + "\t\t" + line.getTel());
+                    writer.flush();
+                    writer.close();
+
+                } catch (Exception e) {
+                    // Si une erreur existe, l’afficher dans un Toast
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+    }
 
     private static boolean isExternalStorageReadOnly() {
         String extStorageState = Environment.getExternalStorageState();

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         RadioButton rbfile = (RadioButton) findViewById(R.id.radioButtonFile);
         RadioButton rbDB = (RadioButton) findViewById(R.id.radioButtonDB);
         btn_liste.setText(("Liste (from CP)").toLowerCase());
+        btn_add.setText(("Ajouter au CP").toLowerCase());
         txt_nom.requestFocus();
         if (savedInstanceState != null)
             passage = savedInstanceState.getString(STATE_PASSAGE);
@@ -64,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 String nom = txt_nom.getText().toString();
                 String prenom = txt_prenom.getText().toString();
                 String tel = txt_tel.getText().toString();
+                int id =0;
                 if ((nom.length()>0) &&(prenom.length()>0)&&(tel.length()>0)){
-                    Contact c = new Contact(nom, prenom, tel);
+                    Contact c = new Contact("",nom, prenom, tel);
 
                     //Utilisation de fichier pour le stockage
                     if (rbtn == 2){
@@ -103,14 +105,17 @@ public class MainActivity extends AppCompatActivity {
                 switch (rb.getId()) {
                     case R.id.radioButtonCP:
                         btn_liste.setText(("Liste (from CP)").toLowerCase());
+                        btn_add.setText(("Ajouter dans CP").toLowerCase());
                        rbtn = 1;
                         break;
                     case R.id.radioButtonFile:
                         btn_liste.setText(("Liste (from File)").toLowerCase());
+                        btn_add.setText(("Ajouter dans fichier").toLowerCase());
                       rbtn = 2;
                         break;
                     case R.id.radioButtonDB:
                         btn_liste.setText(("Liste (from DB)").toLowerCase());
+                        btn_add.setText(("Ajouter dans la DB").toLowerCase());
                        rbtn = 3;
 
                 }// End switch block

@@ -3,7 +3,9 @@ package com.edromedia.customcontact;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.widget.Toast;
 
@@ -72,6 +74,7 @@ public class Content_Provider {
         String last_name = "";
         String name = "";
         String phoneNumber = "";
+
         while (phone_cursor.moveToNext()) {
             try {
                 int id = Integer.parseInt(phone_cursor.getString(phone_cursor.getColumnIndex
@@ -93,12 +96,81 @@ public class Content_Provider {
             } catch (Exception e) {
             }
 
-            Contact c = new Contact((last_name).toUpperCase(), upperFirst(first_name), phoneNumber);
+            Contact c = new Contact("",(last_name).toUpperCase(), upperFirst(first_name), phoneNumber);
             conta.add(c);
         }
         phone_cursor.close();
         return conta;
     }
+
+    public void deleteContact(String firstName, String lastName, Context context) {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        ContentProviderOperation.Builder op = ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI);
+        op.withSelection(ContactsContract.RawContacts._ID+ " = ? ", new String[] {"1"});
+        ops.add(op.build());
+          Toast.makeText(context,"Contact supprimé avec succès. ", Toast.LENGTH_LONG).show();
+
+        try {
+            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+
+            e.printStackTrace();
+        } catch (OperationApplicationException e) {
+
+            e.printStackTrace();
+        }
+    }
+
+
+//    private void deleteContact(String prenom, String nom)
+//    {
+//        // First select raw contact id by given name and family name.
+//        long rawContactId = getRawContactIdByName(givenName, familyName);
+//
+//        ContentResolver contentResolver = getContentResolver();
+//
+//        //******************************* delete data table related data ****************************************
+//        // Data table content process uri.
+//        Uri dataContentUri = ContactsContract.Data.CONTENT_URI;
+//
+//        // Create data table where clause.
+//        StringBuffer dataWhereClauseBuf = new StringBuffer();
+//        dataWhereClauseBuf.append(ContactsContract.Data.RAW_CONTACT_ID);
+//        dataWhereClauseBuf.append(" = ");
+//        dataWhereClauseBuf.append(rawContactId);
+//
+//        // Delete all this contact related data in data table.
+//        contentResolver.delete(dataContentUri, dataWhereClauseBuf.toString(), null);
+//
+//
+//        //******************************** delete raw_contacts table related data ***************************************
+//        // raw_contacts table content process uri.
+//        Uri rawContactUri = ContactsContract.RawContacts.CONTENT_URI;
+//
+//        // Create raw_contacts table where clause.
+//        StringBuffer rawContactWhereClause = new StringBuffer();
+//        rawContactWhereClause.append(ContactsContract.RawContacts._ID);
+//        rawContactWhereClause.append(" = ");
+//        rawContactWhereClause.append(rawContactId);
+//
+//        // Delete raw_contacts table related data.
+//        contentResolver.delete(rawContactUri, rawContactWhereClause.toString(), null);
+//
+//        //******************************** delete contacts table related data ***************************************
+//        // contacts table content process uri.
+//        Uri contactUri = ContactsContract.Contacts.CONTENT_URI;
+//
+//        // Create contacts table where clause.
+//        StringBuffer contactWhereClause = new StringBuffer();
+//        contactWhereClause.append(ContactsContract.Contacts._ID);
+//        contactWhereClause.append(" = ");
+//        contactWhereClause.append(rawContactId);
+//
+//        // Delete raw_contacts table related data.
+//        contentResolver.delete(contactUri, contactWhereClause.toString(), null);
+//
+//    }
+
 
     private String upperFirst(String s){
         return(s.substring(0, 1).toUpperCase() + s.substring(1));

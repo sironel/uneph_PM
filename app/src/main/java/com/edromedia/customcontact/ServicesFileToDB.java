@@ -68,21 +68,23 @@ public class ServicesFileToDB {
         fmContact = fm.readFile();
         dbContact = Mydb.getAllCotacts();
         int n =0;
-        boolean trouve = false;
+        boolean trouve;
         for(int i = 0 ; i < fmContact.size(); i++) {
-
+            trouve = false;
             cfl = fmContact.get(i);
             for (int j = 0; j < dbContact.size(); j++) {
                 cbd = dbContact.get(j);
-                if ((cfl.getNom() == cbd.getNom()) && (cfl.getPrenom() == cbd.getPrenom()) && (cfl.getTel() == cbd.getTel())) {
-
+                if (cfl.getNom().equals(cbd.getNom()) && cfl.getPrenom().equals(cbd.getPrenom()) && cfl.getTel().equals(cbd.getTel())) {
                     trouve = true;
                     break;
                 }
-                n++;
+
             }
 
-            if (!trouve) Mydb.insertContact(cfl);
+            if (!trouve){
+                Mydb.insertContact(cfl);
+                n++;
+            }
         }
         return n;
     }

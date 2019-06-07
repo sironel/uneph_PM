@@ -15,6 +15,10 @@
         android:title="Copier fichier dans DB"/>
 
     <item
+        android:id="@+id/delete"
+        android:title="Supprimer le contact"/>
+
+    <item
         android:id="@+id/exit"
         android:title="Exit to Liste"/>
 

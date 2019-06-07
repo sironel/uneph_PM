@@ -59,9 +59,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public void deleteContact(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String whereClause = "id=?";
+        String whereArgs[] = {id};
+        db.delete("contacts", whereClause, whereArgs);
+    }
+
     public List<Contact> getAllCotacts() {
         ArrayList<Contact> array_list = new ArrayList<Contact>();
-        Contact conta = new Contact("","","");
+        Contact conta = new Contact("","","","");
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from contacts", null );
@@ -76,7 +83,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     private Contact cursorToContact(Cursor cursor) {
-        Contact co= new Contact("","","");
+        Contact co= new Contact("","","","");
+        co.setId((cursor.getString(0)));
         co.setNom((cursor.getString(1)).toUpperCase());
         co.setPrenom(upperFirst(cursor.getString(2)));
         co.setTel(cursor.getString(3));

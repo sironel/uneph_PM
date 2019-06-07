@@ -1,14 +1,24 @@
 package com.edromedia.customcontact;
 
 public class Contact {
+    private String id;
     private String nom;
     private String prenom;
     private String tel;
 
-    public Contact(String nom, String prenom, String tel) {
+    public Contact(String id, String nom, String prenom, String tel) {
+        this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.tel = tel;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -34,7 +44,4 @@ public class Contact {
     public void setTel(String tel) {
         this.tel = tel;
     }
-
-
-
 }
