@@ -1,9 +1,11 @@
 package com.edromedia.customcontact;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +25,10 @@ public class ListeContacts extends AppCompatActivity {
     List<Contact> cont;
     MonAdapter adapter;
     Integer b;
+    int pos;
+    boolean selected = false;
+    Contact contact;
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +72,7 @@ public class ListeContacts extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 for (int i = 0; i < listView.getChildCount(); i++) {
                     if (position == i) {
                         listView.getChildAt(i).setBackgroundColor(Color.BLACK);
@@ -75,37 +80,12 @@ public class ListeContacts extends AppCompatActivity {
                         listView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
+             pos = position;
+                selected = true;
+                    contact = new Contact(cont.get(position).getId(), cont.get(position).getNom(), cont.get(position).getPrenom(), cont.get(position).getTel());
 
-                if (b == 1) {
-
-                    Content_Provider cp1 = new Content_Provider(getApplicationContext(), getContentResolver());
-                    cp1.deleteContact(cont.get(position).getNom(), cont.get(position).getPrenom(), getApplicationContext());
-                    cont.remove(position);
-                    adapter.notifyDataSetChanged();
-                  //  Toast.makeText(getApplicationContext(),"Click ListItem Number " + cont.get(position).getId(), Toast.LENGTH_LONG).show();
-                }
-
-                if (b == 2) {
-
-                    File_Manage fl1 = new File_Manage("contacts.txt",getApplicationContext(),true);
-                    Contact c = new Contact(cont.get(position).getId(),cont.get(position).getNom(),cont.get(position).getPrenom(),cont.get(position).getTel());
-                    fl1.deleteContact(c);
-                    cont.remove(position);
-                    adapter.notifyDataSetChanged();
-                      Toast.makeText(getApplicationContext(),"Click ListItem Number " + cont.get(position).getId(), Toast.LENGTH_LONG).show();
-                }
-
-                if (b == 3) {
-
-                    MySQLiteHelper msh1 = new MySQLiteHelper(getApplicationContext());
-                    msh1.deleteContact(cont.get(position).getId());
-                    cont.remove(position);
-                    adapter.notifyDataSetChanged();
-                    //     Toast.makeText(getApplicationContext(),"Click ListItem Number " + cont.get(position).getNom(), Toast.LENGTH_LONG).show();
-                }
             }
         });
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -115,7 +95,69 @@ public class ListeContacts extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        adapter = new MonAdapter(this,R.layout.layout,cont);
+        listView.setAdapter(adapter);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String question ="Contact sera supprimé dans ";
+        if (b==1)
+            question = question + "le CP";
+        if (b==2)
+            question = question + "le fichier";
+        if (b==3)
+            question = question + "la DB";
+        builder.setMessage(question);
+        builder.setCancelable(false);
+        builder.setTitle("Suppression de contact.");
         switch (item.getItemId()) {
+            case R.id.delete:
+             if (selected) {
+                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         if (b == 1) {
+                             Content_Provider cp1 = new Content_Provider(getApplicationContext(), getContentResolver());
+                             cp1.deleteContact(contact.getNom(), contact.getPrenom(), getApplicationContext());
+                             cont.remove(pos);
+                             Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
+
+                         }
+
+                         if (b == 2) {
+                             File_Manage fl1 = new File_Manage("contacts.txt", getApplicationContext(), true);
+                             Contact c = new Contact(contact.getId(), contact.getNom(), contact.getPrenom(), contact.getTel());
+                             fl1.deleteContact(c);
+                             cont.remove(pos);
+                             Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
+                         }
+
+                         if (b == 3) {
+                             MySQLiteHelper msh1 = new MySQLiteHelper(getApplicationContext());
+                             msh1.deleteContact(contact.getId());
+                             cont.remove(pos);
+
+                             Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
+                         }
+                         adapter.notifyDataSetChanged();
+                     }
+                 });
+
+                 // Set the negative/no button click click listener
+                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         // Do something when click the negative button
+                     }
+                 });
+                 AlertDialog dialog = builder.create();
+                 // Display the alert dialog on interface
+                 dialog.show();
+                 selected = false;
+             }else{
+
+                 Toast.makeText(getApplicationContext(), "Aucun contact selectionné.", Toast.LENGTH_LONG).show();
+             }
+                return true;
+
             case R.id.lst_cp:
 
                 Content_Provider cp = new Content_Provider(this, getContentResolver());
@@ -125,6 +167,8 @@ public class ListeContacts extends AppCompatActivity {
                 b = 1;
                 listView.setAdapter(adapter);
                 return true;
+
+
             case R.id.lst_fl:
 
                 File_Manage f = new File_Manage("contacts.txt",this,true);
@@ -134,8 +178,8 @@ public class ListeContacts extends AppCompatActivity {
                 b = 2;
                 listView.setAdapter(adapter);
                 return true;
-            case R.id.lst_db:
 
+             case R.id.lst_db:
                 MySQLiteHelper msh = new MySQLiteHelper(this);
                 cont = msh.getAllCotacts();
                 txt_contact.setText("Liste à partir de la base de donnees ----- " + cont.size() + " Contacts");
@@ -143,8 +187,8 @@ public class ListeContacts extends AppCompatActivity {
                 b = 3;
                 listView.setAdapter(adapter);
                 return true;
-            case R.id.fltodb:
 
+            case R.id.fltodb:
                 MySQLiteHelper ms = new MySQLiteHelper(this);
                 File_Manage fi = new File_Manage("contacts.txt",this,true);
                 ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,ms,fi);
