@@ -116,7 +116,7 @@ public class ListeContacts extends AppCompatActivity {
                      public void onClick(DialogInterface dialog, int which) {
                          if (b == 1) {
                              Content_Provider cp1 = new Content_Provider(getApplicationContext(), getContentResolver());
-                             cp1.deleteContact(contact.getPrenom(),contact.getNom() ,getApplicationContext());
+                             cp1.deleteContact(getApplicationContext(),contact.getTel(),contact.getPrenom() + " " + contact.getNom());
                              cont.remove(pos);
                              Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
 
