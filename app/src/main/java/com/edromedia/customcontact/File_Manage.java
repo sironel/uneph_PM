@@ -7,6 +7,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -141,8 +142,7 @@ public class File_Manage {
             BufferedWriter bw;
             File file = context.getFileStreamPath(filename);
             if(file == null || !file.exists()) {
-                // ouverture (ou création) du fichier pour modification en mode privé
-                bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
+                     bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
             }else{
                 bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
             }
@@ -162,25 +162,37 @@ public class File_Manage {
 
 
     public void deleteContact(Contact c){
+        String[] tab;
+        try {
+            BufferedWriter bw;
+            File temp = context.getFileStreamPath("temp.txt");
+            bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput("temp.txt", Context.MODE_PRIVATE)));
 
-            List<Contact> lines = new ArrayList<>();
-            lines = readFile();
-            int index = lines.indexOf(c);
-            if (index >= 0 && index <= lines.size() - 1) {
-                lines.remove(index);
+        String removeID = c.getId();
+        String currentLine;
 
-                try {
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
-                    for (final Contact line : lines)
-                        writer.write(line.getId() + "\t\t" + line.getNom() + "\t\t" + line.getPrenom() + "\t\t" + line.getTel());
-                    writer.flush();
-                    writer.close();
-
-                } catch (Exception e) {
-                    // Si une erreur existe, l’afficher dans un Toast
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
+            File f = context.getFileStreamPath("contacts.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
+        while((currentLine = br.readLine()) != null){
+            tab = currentLine.split("\t\t");
+            if((tab[0]).equals(removeID)){
+                currentLine = "";
+            }else {
+                //   bw.write(currentLine + System.getProperty("line.separator"));
+                bw.write(tab[0] + "\t\t" + tab[1] + "\t\t" + tab[2] + "\t\t" + tab[3]);
+                bw.newLine();
             }
+        }
+        bw.close();
+        br.close();
+        boolean delete = f.delete();
+        boolean b = temp.renameTo(f);
+
+        }
+        catch (Exception e) {
+            // Si une erreur existe, l’afficher dans un Toast
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private static boolean isExternalStorageReadOnly() {

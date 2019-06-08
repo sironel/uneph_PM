@@ -55,7 +55,7 @@ public class ListeContacts extends AppCompatActivity {
 
             Content_Provider cp = new Content_Provider(this, getContentResolver());
             cont = cp.readContact();
-            txt_contact.setText("Liste à partir de content Provider ----- " + cont.size() + " Contacts");
+            txt_contact.setText("Liste à partir de CP ----- " + cont.size() + " Contacts");
         }
 
         //Utilisation de la DB pour lire les contacts
@@ -63,7 +63,7 @@ public class ListeContacts extends AppCompatActivity {
 
             MySQLiteHelper msh = new MySQLiteHelper(this);
             cont = msh.getAllCotacts();
-            txt_contact.setText("Liste à partir de la base de donnees ----- " + cont.size() + " Contacts");
+            txt_contact.setText("Liste à partir de la BD ----- " + cont.size() + " Contacts");
         }
 
         adapter = new MonAdapter(this,R.layout.layout,cont);
@@ -116,7 +116,7 @@ public class ListeContacts extends AppCompatActivity {
                      public void onClick(DialogInterface dialog, int which) {
                          if (b == 1) {
                              Content_Provider cp1 = new Content_Provider(getApplicationContext(), getContentResolver());
-                             cp1.deleteContact(contact.getNom(), contact.getPrenom(), getApplicationContext());
+                             cp1.deleteContact(contact.getPrenom(),contact.getNom() ,getApplicationContext());
                              cont.remove(pos);
                              Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
 
@@ -162,7 +162,7 @@ public class ListeContacts extends AppCompatActivity {
 
                 Content_Provider cp = new Content_Provider(this, getContentResolver());
                 cont = cp.readContact();
-                txt_contact.setText("Liste à partir de content Provider ----- " + cont.size() + " Contacts");
+                txt_contact.setText("Liste à partir de CP ----- " + cont.size() + " Contacts");
                 MonAdapter adapter = new MonAdapter(this,R.layout.layout,cont);
                 b = 1;
                 listView.setAdapter(adapter);
@@ -182,7 +182,7 @@ public class ListeContacts extends AppCompatActivity {
              case R.id.lst_db:
                 MySQLiteHelper msh = new MySQLiteHelper(this);
                 cont = msh.getAllCotacts();
-                txt_contact.setText("Liste à partir de la base de donnees ----- " + cont.size() + " Contacts");
+                txt_contact.setText("Liste à partir de la BD ----- " + cont.size() + " Contacts");
                 adapter = new MonAdapter(this,R.layout.layout,cont);
                 b = 3;
                 listView.setAdapter(adapter);
