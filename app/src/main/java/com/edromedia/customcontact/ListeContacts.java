@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -118,6 +119,7 @@ public class ListeContacts extends AppCompatActivity {
                              Content_Provider cp1 = new Content_Provider(getApplicationContext(), getContentResolver());
                              cp1.deleteContact(getApplicationContext(),contact.getTel(),contact.getPrenom() + " " + contact.getNom());
                              cont.remove(pos);
+                             txt_contact.setText("Liste à partir de CP ----- " + cont.size() + " Contacts");
                              Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
 
                          }
@@ -127,6 +129,7 @@ public class ListeContacts extends AppCompatActivity {
                              Contact c = new Contact(contact.getId(), contact.getNom(), contact.getPrenom(), contact.getTel());
                              fl1.deleteContact(c);
                              cont.remove(pos);
+                             txt_contact.setText("Liste à partir de fichier ----- " + cont.size() + " Contacts");
                              Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
                          }
 
@@ -134,7 +137,7 @@ public class ListeContacts extends AppCompatActivity {
                              MySQLiteHelper msh1 = new MySQLiteHelper(getApplicationContext());
                              msh1.deleteContact(contact.getId());
                              cont.remove(pos);
-
+                             txt_contact.setText("Liste à partir de BD ----- " + cont.size() + " Contacts");
                              Toast.makeText(getApplicationContext(), "Contact supprimé avec succès", Toast.LENGTH_LONG).show();
                          }
                          adapter.notifyDataSetChanged();
@@ -156,6 +159,43 @@ public class ListeContacts extends AppCompatActivity {
 
                  Toast.makeText(getApplicationContext(), "Aucun contact selectionné.", Toast.LENGTH_LONG).show();
              }
+                return true;
+
+            case R.id.update:
+                if (selected) {
+                    Bundle ext = new Bundle();
+                    ext.putString("id",contact.getId() );
+                    ext.putString("nom",contact.getNom() );
+                    ext.putString("prenom",contact.getPrenom() );
+                    ext.putString("tel",contact.getTel() );
+                    int id_source = 0;
+
+                    String message = "";
+
+                            if (b == 1) {
+                                message = "Modifier le CP";
+                                id_source = 1;
+                            }
+
+                            if (b == 2) {
+
+                                message = "Modifier le fichier";
+                                id_source = 2;
+                            }
+
+                            if (b == 3) {
+                                message = "Modifier la BD";
+                                id_source = 3;
+                               }
+                    ext.putInt("id_source",id_source );
+                    ext.putString("message",message );
+                    Intent i = new Intent(this, MainActivity.class);
+                    i.putExtras(ext);
+                    startActivity(i);
+                }else{
+
+                    Toast.makeText(getApplicationContext(), "Aucun contact selectionné.", Toast.LENGTH_LONG).show();
+                }
                 return true;
 
             case R.id.lst_cp:

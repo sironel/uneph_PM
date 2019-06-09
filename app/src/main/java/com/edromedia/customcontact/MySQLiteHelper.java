@@ -59,6 +59,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateContact (Contact c) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", c.getId());
+        contentValues.put("nom", c.getNom());
+        contentValues.put("prenom", c.getPrenom());
+        contentValues.put("tel", c.getTel());
+
+        db.update("contacts", contentValues, "id = ? ", new String[] {c.getId()} );
+        return true;
+    }
+
+
+
     public void deleteContact(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         String whereClause = "id=?";

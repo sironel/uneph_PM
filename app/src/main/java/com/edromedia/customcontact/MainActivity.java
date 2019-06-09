@@ -19,9 +19,11 @@ public class MainActivity extends AppCompatActivity {
     EditText txt_tel;
     Button btn_add,btn_liste;
     TextView txt_Compteur;
+    Bundle ext;
+    RadioGroup radioGroup;
     int rbtn = 1;
     static final String STATE_PASSAGE = "1";
-    String passage;
+    String passage,id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         btn_add = (Button) findViewById(R.id.btn_add);
         btn_liste = (Button) findViewById(R.id.btn_liste);
         txt_Compteur = (TextView) findViewById(R.id.txt_Compteur);
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         RadioButton rbCP = (RadioButton) findViewById(R.id.radioButtonCP);
         RadioButton rbfile = (RadioButton) findViewById(R.id.radioButtonFile);
         RadioButton rbDB = (RadioButton) findViewById(R.id.radioButtonDB);
@@ -47,17 +49,49 @@ public class MainActivity extends AppCompatActivity {
            // Toast.makeText(MainActivity.this, "Passage: " + passage, Toast.LENGTH_SHORT).show();
             txt_Compteur.setText("Compteur de Passage: " + passage);
 
+
+            Intent intent = getIntent();
+             ext = intent.getExtras();
+            if (ext != null) {
+                id = ext.getString("id");
+                txt_nom.setText(ext.getString("nom"));
+                txt_prenom.setText(ext.getString("prenom"));
+                txt_tel.setText(ext.getString("tel"));
+                btn_add.setText(ext.getString("message"));
+                btn_liste.setText("Annuler");
+                if (ext.getInt("id_source")==1) {
+                    radioGroup.check(R.id.radioButtonCP);
+                    rbtn = 4;
+                }
+                if (ext.getInt("id_source")==2) {
+                    radioGroup.check(R.id.radioButtonFile);
+                    rbtn = 5;
+                }
+                if (ext.getInt("id_source")==3) {
+                    radioGroup.check(R.id.radioButtonDB);
+                    rbtn = 6;
+                }
+
+                for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                    radioGroup.getChildAt(i).setEnabled(false);
+                }
+                ext = null;
+            }
         btn_liste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle extras = new Bundle();
-                extras.putInt("rbtn", rbtn);
-               Intent i = new Intent(MainActivity.this, ListeContacts.class);
-                i.putExtras(extras);
-               startActivity(i);
+                if (rbtn < 4) {
+                    Bundle extras = new Bundle();
+                    extras.putInt("rbtn", rbtn);
+                    Intent i = new Intent(MainActivity.this, ListeContacts.class);
+                    i.putExtras(extras);
+                    startActivity(i);
+                } else {
+                    annuler();
+                }
             }
-
         });
+
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 String nom = txt_nom.getText().toString();
                 String prenom = txt_prenom.getText().toString();
                 String tel = txt_tel.getText().toString();
-                int id =0;
+
                 if ((nom.length()>0) &&(prenom.length()>0)&&(tel.length()>0)){
                     Contact c = new Contact("",nom, prenom, tel);
 
@@ -87,8 +121,32 @@ public class MainActivity extends AppCompatActivity {
                         msh.insertContact(c);
                     }
 
-                    razo();
-                    Toast.makeText(MainActivity.this,"Contact ajouté avec succès.",Toast.LENGTH_SHORT).show();
+                    if (rbtn < 4) {
+                        razo();
+                        Toast.makeText(MainActivity.this, "Contact ajouté avec succès.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (rbtn == 4){
+
+                    }
+                    if (rbtn == 5){
+                        File_Manage f = new File_Manage("contacts.txt",MainActivity.this,true);
+                        c.setId(id);
+                        f.updateContact(c);
+
+                    }
+                    if (rbtn == 6){
+                        MySQLiteHelper msh = new MySQLiteHelper(MainActivity.this);
+                        c.setId(id);
+                        msh.updateContact(c);
+                    }
+
+                    if (rbtn > 3) {
+                        razo();
+                        Toast.makeText(MainActivity.this,"Contact modifié avec succès.",Toast.LENGTH_SHORT).show();
+                   rbtn = 1;
+                        annuler();
+                    }
 
                 }else{
                     Toast.makeText(MainActivity.this,"Champs vides.",Toast.LENGTH_SHORT).show();
@@ -125,7 +183,17 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+private  void annuler(){
+    btn_liste.setText("Liste from CP");
+    btn_add.setText("Ajouter à CP");  for (int i = 0; i < radioGroup.getChildCount(); i++) {
+        radioGroup.getChildAt(i).setEnabled(true);
+    }
+    radioGroup.check(R.id.radioButtonCP);
+    ext = null;
+    razo();
 
+
+}
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){

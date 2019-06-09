@@ -1,6 +1,8 @@
 package com.edromedia.customcontact;
 
-public class Contact {
+import android.os.Parcelable;
+
+public class Contact  {
     private String id;
     private String nom;
     private String prenom;

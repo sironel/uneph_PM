@@ -195,6 +195,43 @@ public class File_Manage {
         }
     }
 
+    public void updateContact(Contact c){
+        String[] tab;
+        try {
+            BufferedWriter bw;
+            File temp = context.getFileStreamPath("temp.txt");
+            bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput("temp.txt", Context.MODE_PRIVATE)));
+
+            String removeID = c.getId();
+            String currentLine;
+
+            File f = context.getFileStreamPath("contacts.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
+            while((currentLine = br.readLine()) != null){
+                tab = currentLine.split("\t\t");
+                if((tab[0]).equals(removeID)){
+                    bw.write(c.getId() + "\t\t" + c.getNom() + "\t\t" + c.getPrenom() + "\t\t" + c.getTel());
+                    bw.newLine();
+                   // currentLine = "";
+                }else {
+                    //   bw.write(currentLine + System.getProperty("line.separator"));
+                    bw.write(tab[0] + "\t\t" + tab[1] + "\t\t" + tab[2] + "\t\t" + tab[3]);
+                    bw.newLine();
+                }
+            }
+            bw.close();
+            br.close();
+            boolean delete = f.delete();
+            boolean b = temp.renameTo(f);
+
+        }
+        catch (Exception e) {
+            // Si une erreur existe, l’afficher dans un Toast
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+
     private static boolean isExternalStorageReadOnly() {
         String extStorageState = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(extStorageState)) {
