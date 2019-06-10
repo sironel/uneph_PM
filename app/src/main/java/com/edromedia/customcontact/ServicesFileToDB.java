@@ -8,7 +8,7 @@ import java.util.List;
 public class ServicesFileToDB {
     Context context;
     String filename;
-    boolean internalFile;
+    boolean internalFile=true;
     MySQLiteHelper Mydb = new MySQLiteHelper(context);
     File_Manage fm = new File_Manage(filename,context,internalFile);
 

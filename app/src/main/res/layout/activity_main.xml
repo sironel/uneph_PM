@@ -67,10 +67,10 @@
 
     <RadioGroup
         android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_tel"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
         android:layout_weight=".33">
 
         <RadioButton
@@ -95,29 +95,40 @@
             android:layout_weight="1"
             android:text="Save to Database" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ajouter" />
-
-            <Button
-                android:id="@+id/btn_liste"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/btn_add"
-                android:text="Liste" />
-        </LinearLayout>
-
 
     </RadioGroup>
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_below="@+id/radioGroup"
+        android:checked="true"
+        android:text="Internal File" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/switch1"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ajouter" />
+
+        <Button
+            android:id="@+id/btn_liste"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/btn_add"
+            android:text="Liste" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/txt_Compteur"

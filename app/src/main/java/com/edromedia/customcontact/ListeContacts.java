@@ -28,6 +28,7 @@ public class ListeContacts extends AppCompatActivity {
     Integer b;
     int pos;
     boolean selected = false;
+    boolean internalFile = true;
     Contact contact;
 
     @SuppressLint("SetTextI18n")
@@ -41,13 +42,14 @@ public class ListeContacts extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
          b = extras.getInt("rbtn");
+         internalFile = extras.getBoolean("internalFile");
 
         cont = new ArrayList<Contact>();
 
         //Utilisation de fichier pour lire les contacts
         if(b==2) {
 
-            File_Manage f = new File_Manage("contacts.txt",this,true);
+            File_Manage f = new File_Manage("contacts.txt",this,internalFile);
             cont = f.readFile();
             txt_contact.setText("Liste à partir de fichier ---- " + cont.size() + " Contacts");
         }
@@ -125,7 +127,7 @@ public class ListeContacts extends AppCompatActivity {
                          }
 
                          if (b == 2) {
-                             File_Manage fl1 = new File_Manage("contacts.txt", getApplicationContext(), true);
+                             File_Manage fl1 = new File_Manage("contacts.txt", getApplicationContext(), internalFile);
                              Contact c = new Contact(contact.getId(), contact.getNom(), contact.getPrenom(), contact.getTel());
                              fl1.deleteContact(c);
                              cont.remove(pos);
@@ -211,7 +213,7 @@ public class ListeContacts extends AppCompatActivity {
 
             case R.id.lst_fl:
 
-                File_Manage f = new File_Manage("contacts.txt",this,true);
+                File_Manage f = new File_Manage("contacts.txt",this,internalFile);
                 cont = f.readFile();
                 txt_contact.setText("Liste à partir de fichier ---- " + cont.size() + " Contacts");
                 adapter = new MonAdapter(this,R.layout.layout,cont);
@@ -230,7 +232,7 @@ public class ListeContacts extends AppCompatActivity {
 
             case R.id.fltodb:
                 MySQLiteHelper ms = new MySQLiteHelper(this);
-                File_Manage fi = new File_Manage("contacts.txt",this,true);
+                File_Manage fi = new File_Manage("contacts.txt",this,internalFile);
                 ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,ms,fi);
                 int nbTrans = sftDB.transfertFileToBD();
                 Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ",Toast.LENGTH_SHORT).show();

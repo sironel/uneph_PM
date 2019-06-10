@@ -2,18 +2,26 @@ package com.edromedia.customcontact;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class File_Manage {
     private  String filename;
@@ -56,7 +64,8 @@ public class File_Manage {
     public List<Contact> readFile(){
         String[] infoContact;
         List<Contact> conta = new ArrayList<Contact>();
-
+        FileInputStream br;
+        if (internalFile) {
         try {
             // ouverture du fichier pour lecture
             BufferedReader brInfo = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
@@ -76,41 +85,94 @@ public class File_Manage {
             // Si une erreur existe, l’afficher dans un Toast
             Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+        }else {
+            File root = android.os.Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/download");
+            dir.mkdirs();
+            File file = new File(dir, "contacts.txt");
+            try {//
+
+                // ouverture du fichier pour lecture
+                br = new FileInputStream(file);
+                DataInputStream in = new DataInputStream(br);
+                BufferedReader bro = new BufferedReader(new InputStreamReader(in));
+                String info;
+                while ((info = bro.readLine()) != null) {
+                    infoContact = info.split("\t\t");
+                    Contact c = new Contact(infoContact[0], (infoContact[1]).toUpperCase(), upperFirst(infoContact[2]), infoContact[3]);
+                    conta.add(c);
+                }
+                // fermeture du Reader
+                bro.close();
+            } catch (Exception e) {
+                // Si une erreur existe, l’afficher dans un Toast
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
         return conta;
     }
 
 
-    public boolean recordFound(String id){
+    private boolean recordFound(String id){
         String[] infoContact;
       boolean trouver = false;
-        try {
-            // ouverture du fichier pour lecture
-            BufferedReader brInfo = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
-            // line est une variable qui stocke le contenu d’une ligne
-            String info;
-            while ((info = brInfo.readLine()) != null)
-            {
-                infoContact = info.split("\t\t");
-                if((infoContact[0]).equals(id))
-                    trouver = true;
-                break;
+        BufferedReader brInfo;
+        FileInputStream br;
+        if (internalFile) {
+            try {
+                // ouverture du fichier pour lecture
+                brInfo = new BufferedReader(new InputStreamReader(context.openFileInput("contacts.txt")));
+                // line est une variable qui stocke le contenu d’une ligne
+                String info;
+                while ((info = brInfo.readLine()) != null) {
+                    infoContact = info.split("\t\t");
+                    if ((infoContact[0]).equals(id))
+                        trouver = true;
+                    break;
+                }
+                // fermeture du Reader
+                brInfo.close();
+            } catch (Exception e) {
+                // Si une erreur existe, l’afficher dans un Toast
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
             }
-            // fermeture du Reader
-            brInfo.close();
-        }
-        catch (Exception e)
-        {
-            // Si une erreur existe, l’afficher dans un Toast
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }else{
+            File root = android.os.Environment.getExternalStorageDirectory();
+            File dir = new File (root.getAbsolutePath() + "/download");
+            dir.mkdirs();
+            File file = new File(dir, "contacts.txt");
+            try {
+                // ouverture du fichier pour lecture
+                br = new FileInputStream(file);
+                DataInputStream in = new DataInputStream(br);
+                BufferedReader bro = new BufferedReader(new InputStreamReader(in));
+                   // info est une variable qui stocke le contenu d’une ligne
+                String info;
+                while ((info = bro.readLine()) != null) {
+                    infoContact = info.split("\t\t");
+                    if ((infoContact[0]).equals(id))
+                        trouver = true;
+                    Toast.makeText(context, "ID Trouvé", Toast.LENGTH_LONG).show();
+                    break;
+                }
+                // fermeture du Reader
+                br.close();
+            } catch (Exception e) {
+                // Si une erreur existe, l’afficher dans un Toast
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
         }
         return trouver;
     }
 
     public  String generateID(){
-     String id = Integer.toString(nbRcordFile() + 1);
+        int li = nbRcordFile()+1;
+     String id = Integer.toString(li);
 
         while (recordFound(id)){
-            id = Integer.toString(Integer.parseInt(id) + 1);
+            li++;
+            id = Integer.toString(li);
         }
     return id;
     }
@@ -118,9 +180,12 @@ public class File_Manage {
 
     public int nbRcordFile(){
       int nbrecord = 0;
+      BufferedReader brInfo;
+      FileInputStream br;
+      if (internalFile) {
         try {
-            BufferedReader brInfo = new BufferedReader(new InputStreamReader( context.openFileInput("contacts.txt")));
-            String info;
+             brInfo = new BufferedReader(new InputStreamReader(context.openFileInput("contacts.txt")));
+             String info;
             while ((info = brInfo.readLine()) != null)
             {
                nbrecord++;
@@ -131,6 +196,31 @@ public class File_Manage {
         {
                  Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
         }
+      }else{
+
+          File root = android.os.Environment.getExternalStorageDirectory();
+          File dir = new File (root.getAbsolutePath() + "/download");
+          dir.mkdirs();
+          File file = new File(dir, "contacts.txt");
+
+          try {
+              br = new FileInputStream(file);
+              DataInputStream in = new DataInputStream(br);
+              BufferedReader bro = new BufferedReader(new InputStreamReader(in));
+              // info est une variable qui stocke le contenu d’une ligne
+
+              while ((bro.readLine()) != null) {
+                   nbrecord++;
+              }
+              Toast.makeText(context, "NB_record: "+nbrecord, Toast.LENGTH_LONG).show();
+              br.close();
+          }
+          catch (Exception e)
+          {
+              Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+          }
+
+      }
         return nbrecord;
     }
 
@@ -138,25 +228,52 @@ public class File_Manage {
 
     public void writeFile(Contact c){
         //Ecrire les infos du Contact dans le fichier nom.txt
-        try {
-            BufferedWriter bw;
-            File file = context.getFileStreamPath(filename);
-            if(file == null || !file.exists()) {
-                     bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
-            }else{
-                bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
+        if (internalFile) {
+            try {
+
+                BufferedWriter bw;
+                File file = context.getFileStreamPath(filename);
+                if (file == null || !file.exists()) {
+                    bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
+                } else {
+                    bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
+                }
+                // generer l'id du contact
+                String id = generateID();
+                // écriture de la chaîne de caractère dans le fichier
+                bw.write(id + "\t\t" + c.getNom() + "\t\t" + c.getPrenom() + "\t\t" + c.getTel());
+                bw.newLine();
+                // fermeture du fichier
+                bw.close();
             }
-            // generer l'id du contact
-             String id = generateID();
-            // écriture de la chaîne de caractère dans le fichier
-            bw.write(id+"\t\t"+c.getNom()+"\t\t"+c.getPrenom()+"\t\t"+c.getTel());
-            bw.newLine();
-            // fermeture du fichier
-            bw.close();
-        }
-        catch (Exception e) {
-            // Si une erreur existe, l’afficher dans un Toast
-            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        catch(Exception e){
+                // Si une erreur existe, l’afficher dans un Toast
+                Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }else{
+            File root = android.os.Environment.getExternalStorageDirectory();
+            File dir = new File (root.getAbsolutePath() + "/download");
+            FileOutputStream f;
+            dir.mkdirs();
+            File file = new File(dir, "contacts.txt");
+            try {
+                if (!file.exists()) {
+                     f = new FileOutputStream(file);
+                }  else{
+                     f = new FileOutputStream(file, true);}
+                PrintWriter pw = new PrintWriter(f);
+                String id = generateID();
+                pw.println(id + "\t\t" + c.getNom() + "\t\t" + c.getPrenom() + "\t\t" + c.getTel());
+                pw.flush();
+                pw.close();
+                f.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

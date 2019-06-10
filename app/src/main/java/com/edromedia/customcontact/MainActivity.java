@@ -5,9 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn_add,btn_liste;
     TextView txt_Compteur;
     Bundle ext;
+    boolean internalFile = true;
     RadioGroup radioGroup;
     int rbtn = 1;
     static final String STATE_PASSAGE = "1";
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 if (rbtn < 4) {
                     Bundle extras = new Bundle();
                     extras.putInt("rbtn", rbtn);
+                    extras.putBoolean("internalFile",internalFile);
                     Intent i = new Intent(MainActivity.this, ListeContacts.class);
                     i.putExtras(extras);
                     startActivity(i);
@@ -92,6 +96,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Switch sw = (Switch) findViewById(R.id.switch1);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                   internalFile = true;
+                } else {
+                    internalFile = false;
+                }
+            }
+        });
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //Utilisation de fichier pour le stockage
                     if (rbtn == 2){
-                      File_Manage f = new File_Manage("contacts.txt",MainActivity.this,true);
+                      File_Manage f = new File_Manage("contacts.txt",MainActivity.this,internalFile);
                       f.writeFile(c);
                     }
 
@@ -127,10 +141,11 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (rbtn == 4){
-
+              //          Content_Provider cp =new Content_Provider(MainActivity.this,getContentResolver());
+                //        cp.updateContact(c);
                     }
                     if (rbtn == 5){
-                        File_Manage f = new File_Manage("contacts.txt",MainActivity.this,true);
+                        File_Manage f = new File_Manage("contacts.txt",MainActivity.this,internalFile);
                         c.setId(id);
                         f.updateContact(c);
 
