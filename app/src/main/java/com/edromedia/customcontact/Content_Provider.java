@@ -1,6 +1,7 @@
 package com.edromedia.customcontact;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -8,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -74,11 +76,12 @@ public class Content_Provider {
         String first_name ="";
         String last_name = "";
         String name = "";
+        int id = 0;
         String phoneNumber = "";
 
         while (phone_cursor.moveToNext()) {
             try {
-                int id = Integer.parseInt(phone_cursor.getString(phone_cursor.getColumnIndex
+                id = Integer.parseInt(phone_cursor.getString(phone_cursor.getColumnIndex
                         (ContactsContract.CommonDataKinds.Phone.CONTACT_ID)));
                 Cursor name_cursor = cr.query(ContactsContract.Data.CONTENT_URI,null,
                         ContactsContract.Data.CONTACT_ID + "  = " + id, null, null);
@@ -97,7 +100,7 @@ public class Content_Provider {
             } catch (Exception e) {
             }
 
-            Contact c = new Contact("",(last_name).toUpperCase(), upperFirst(first_name), phoneNumber);
+            Contact c = new Contact(String.valueOf(id),(last_name).toUpperCase(), upperFirst(first_name), phoneNumber);
             conta.add(c);
         }
         phone_cursor.close();
@@ -131,6 +134,76 @@ public class Content_Provider {
         return false;
     }
 
+
+    private final static String[] DATA_COLS = {
+
+            ContactsContract.Data.MIMETYPE,
+            ContactsContract.Data.DATA1,//phone number
+            ContactsContract.Data.CONTACT_ID
+    };
+
+
+   /// public static boolean updateContact(final Context context, String number, String newName, String newNumber) {
+    public static boolean updateContact(final Context context, Contact oldContact, Contact newContact) {
+
+        if (context == null || oldContact.getTel() == null || oldContact.getTel().trim().isEmpty()) return false;
+        if (newContact.getTel() != null && newContact.getTel().trim().isEmpty()) newContact.setTel(null);
+        if (newContact.getTel() == null) return false;
+
+        String contactId = oldContact.getId();
+        if (contactId == null) return false;
+
+        //selection for name
+        String where = String.format(
+                "%s = '%s' AND %s = ?",
+                DATA_COLS[0], //mimetype
+                ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
+                DATA_COLS[2]/*contactId*/);
+
+        String[] args = {contactId};
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        operations.add(
+                ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(where, args)
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, newContact.getPrenom())
+                        .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, newContact.getNom())
+                        .build()
+        );
+
+        //change selection for number
+        where = String.format(
+                "%s = '%s' AND %s = ?",
+                DATA_COLS[0],//mimetype
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                DATA_COLS[1]/*number*/);
+
+        //change args for number
+        args[0] = oldContact.getTel();
+
+        operations.add(
+                ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                        .withSelection(where, args)
+                        .withValue(DATA_COLS[1]/*number*/, newContact.getTel())
+                        .build()
+        );
+
+        try {
+
+            ContentProviderResult[] results = context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, operations);
+
+            for (ContentProviderResult result : results) {
+
+                Log.d("Update Result", result.toString());
+            }
+
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
     private String upperFirst(String s){
         return(s.substring(0, 1).toUpperCase() + s.substring(1));

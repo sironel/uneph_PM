@@ -236,7 +236,7 @@ public class File_Manage {
                 if (file == null || !file.exists()) {
                     bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE)));
                 } else {
-                    bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
+                   bw = new BufferedWriter(new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_APPEND)));
                 }
                 // generer l'id du contact
                 String id = generateID();

@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Bundle ext;
     boolean internalFile = true;
     RadioGroup radioGroup;
+    Contact oldContact;
     int rbtn = 1;
     static final String STATE_PASSAGE = "1";
     String passage,id;
@@ -56,12 +57,14 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = getIntent();
              ext = intent.getExtras();
             if (ext != null) {
+
                 id = ext.getString("id");
                 txt_nom.setText(ext.getString("nom"));
                 txt_prenom.setText(ext.getString("prenom"));
                 txt_tel.setText(ext.getString("tel"));
                 btn_add.setText(ext.getString("message"));
                 btn_liste.setText("Annuler");
+                oldContact = new Contact( ext.getString("id"),ext.getString("nom"),ext.getString("prenom"),ext.getString("tel"));
                 if (ext.getInt("id_source")==1) {
                     radioGroup.check(R.id.radioButtonCP);
                     rbtn = 4;
@@ -141,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (rbtn == 4){
-              //          Content_Provider cp =new Content_Provider(MainActivity.this,getContentResolver());
-                //        cp.updateContact(c);
+                       Content_Provider cp =new Content_Provider(MainActivity.this,getContentResolver());
+                       cp.updateContact(MainActivity.this,oldContact,c);
                     }
                     if (rbtn == 5){
                         File_Manage f = new File_Manage("contacts.txt",MainActivity.this,internalFile);

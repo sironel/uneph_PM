@@ -172,6 +172,7 @@ public class ListeContacts extends AppCompatActivity {
                     ext.putString("tel",contact.getTel() );
                     int id_source = 0;
 
+
                     String message = "";
 
                             if (b == 1) {
