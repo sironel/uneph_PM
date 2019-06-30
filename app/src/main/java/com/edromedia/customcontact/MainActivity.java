@@ -203,9 +203,11 @@ public class MainActivity extends AppCompatActivity {
 
 private  void annuler(){
     btn_liste.setText("Liste from CP");
-    btn_add.setText("Ajouter à CP");  for (int i = 0; i < radioGroup.getChildCount(); i++) {
+    btn_add.setText("Ajouter à CP");
+    for (int i = 0; i < radioGroup.getChildCount(); i++) {
         radioGroup.getChildAt(i).setEnabled(true);
     }
+    rbtn = 1;
     radioGroup.check(R.id.radioButtonCP);
     ext = null;
     razo();

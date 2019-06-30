@@ -1,11 +1,13 @@
 package com.edromedia.customcontact;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -26,10 +28,12 @@ public class ListeContacts extends AppCompatActivity {
     List<Contact> cont;
     MonAdapter adapter;
     Integer b;
+    View v;
     int pos;
     boolean selected = false;
     boolean internalFile = true;
     Contact contact;
+    private ContactTransReciver contactTransReciver;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -38,7 +42,7 @@ public class ListeContacts extends AppCompatActivity {
         setContentView(R.layout.liste_contacts);
         txt_contact = (TextView) findViewById(R.id.txt_contact);
         listView = (ListView) findViewById(R.id.listView);
-
+        registerContactTransReceiver();
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
          b = extras.getInt("rbtn");
@@ -89,6 +93,35 @@ public class ListeContacts extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(contactTransReciver);
+    }
+    public void startContactTransService(View view){
+        Bundle extras = new Bundle();
+        extras.putBoolean("internalFile",internalFile);
+        Intent contIntent =  new Intent();
+        contIntent.setClass(this, ContactTransIntentService.class);
+        contIntent.putExtras(extras);
+        startService(contIntent);
+    }
+    private void registerContactTransReceiver(){
+        contactTransReciver = new ContactTransReciver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ContactTransIntentService.NBCONTACT_INFO);
+
+        registerReceiver(contactTransReciver, intentFilter);
+    }
+    private class ContactTransReciver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String nbContact = intent.getStringExtra("nbcontact_info");
+            Toast.makeText(getApplicationContext(),nbContact + " Contacts ajoutés",Toast.LENGTH_LONG).show();
+            //tv.setText(cbinfo);
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -232,16 +265,18 @@ public class ListeContacts extends AppCompatActivity {
                 return true;
 
             case R.id.fltodb:
-                MySQLiteHelper ms = new MySQLiteHelper(this);
-                File_Manage fi = new File_Manage("contacts.txt",this,internalFile);
-                ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,ms,fi);
-                int nbTrans = sftDB.transfertFileToBD();
-                Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ",Toast.LENGTH_SHORT).show();
+                startContactTransService(v);
 
-              cont = ms.getAllCotacts();
-                txt_contact.setText("Liste à partir de la base de donnees ----- " + cont.size() + " Contacts");
-              adapter = new MonAdapter(this,R.layout.layout,cont);
-              listView.setAdapter(adapter);
+//                MySQLiteHelper ms = new MySQLiteHelper(this);
+//                File_Manage fi = new File_Manage("contacts.txt",this,internalFile);
+//                ServicesFileToDB sftDB = new ServicesFileToDB(this,"contacts.txt",true,ms,fi);
+//                int nbTrans = sftDB.transfertFileToBD();
+//                Toast.makeText(this,nbTrans + " contact ajouté dans la Base de données. ",Toast.LENGTH_SHORT).show();
+//
+//              cont = ms.getAllCotacts();
+//                txt_contact.setText("Liste à partir de la base de donnees ----- " + cont.size() + " Contacts");
+//              adapter = new MonAdapter(this,R.layout.layout,cont);
+//              listView.setAdapter(adapter);
                  return true;
             case R.id.exit:
                 finish();
